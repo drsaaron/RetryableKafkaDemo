@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.retrytopic.SameIntervalTopicReuseStrategy;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -45,7 +46,7 @@ public class TriggerDataKafkaListener {
         }
     }
 
-    @RetryableTopic(backoff = @Backoff(2_000), attempts = "4")
+    @RetryableTopic(backoff = @Backoff(2_000), sameIntervalTopicReuseStrategy = SameIntervalTopicReuseStrategy.SINGLE_TOPIC, attempts = "10")
     @KafkaListener(topics = "${demo.topic}")
     public void processTriggerData(@Payload String triggerJson, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) throws JsonProcessingException {
 
@@ -53,7 +54,8 @@ public class TriggerDataKafkaListener {
         
         boolean autoFail = true;
         
-        if (topic.matches("^.*retry-[0-9]")) {
+        if (topic.endsWith("-retry")) {
+//        if (topic.matches("^.*retry-[0-9]")) {
             triggerJson = extractTrigger(triggerJson);
             log.info("transformed trigger = {}", triggerJson);
             
