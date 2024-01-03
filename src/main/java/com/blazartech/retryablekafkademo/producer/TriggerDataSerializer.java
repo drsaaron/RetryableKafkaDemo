@@ -4,6 +4,7 @@
  */
 package com.blazartech.retryablekafkademo.producer;
 
+import com.blazartech.retryablekafkademo.TriggerData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.Serializer;
@@ -12,12 +13,12 @@ import org.apache.kafka.common.serialization.Serializer;
  *
  * @author aar1069
  */
-public class TriggerDataSerializer implements Serializer {
+public class TriggerDataSerializer implements Serializer<TriggerData> {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
     
     @Override
-    public byte[] serialize(String string, Object t) {
+    public byte[] serialize(String string, TriggerData t) {
         try {
             return objectMapper.writeValueAsBytes(t);
         } catch(JsonProcessingException e) {
