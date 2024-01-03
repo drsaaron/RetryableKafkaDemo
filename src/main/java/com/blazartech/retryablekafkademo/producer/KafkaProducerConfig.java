@@ -43,7 +43,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, TriggerData> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+    public KafkaTemplate<String, TriggerData> kafkaTemplate(ProducerFactory<String, TriggerData> producerFactory) {
+        return new KafkaTemplate<>(producerFactory);
     }
 }
